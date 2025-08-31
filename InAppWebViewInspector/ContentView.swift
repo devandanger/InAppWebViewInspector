@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import SafariServices
 
 enum WebViewType: String, CaseIterable {
     case safariInternal = "Safari Internal"
@@ -22,8 +23,10 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     
-    @State private var urlText: String = "https://example.com"
+    @State private var urlText: String = "https://www.google.com"
     @State private var selectedWebViewType: WebViewType = .embeddedWebView
+    @State private var showingSafariView = false
+    @State private var showingEmbeddedWebView = false
     
     var body: some View {
         VStack(spacing: 30) {
@@ -58,11 +61,30 @@ struct ContentView: View {
         }
         .navigationTitle("Inspector")
         .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: $showingSafariView) {
+            if let url = URL(string: urlText) {
+                SafariView(url: url)
+            }
+        }
+        .sheet(isPresented: $showingEmbeddedWebView) {
+            EmbeddedWebViewScreen(urlString: urlText)
+        }
     }
     
     private func launchWebView() {
-        // TODO: Implement launch functionality based on selectedWebViewType
-        print("Launching \(selectedWebViewType.title) with URL: \(urlText)")
+        guard let url = URL(string: urlText) else {
+            print("Invalid URL: \(urlText)")
+            return
+        }
+        
+        switch selectedWebViewType {
+        case .safariInternal:
+            showingSafariView = true
+        case .externalSafari:
+            UIApplication.shared.open(url)
+        case .embeddedWebView:
+            showingEmbeddedWebView = true
+        }
     }
 
     private func addItem() {
@@ -78,6 +100,19 @@ struct ContentView: View {
                 modelContext.delete(items[index])
             }
         }
+    }
+}
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let safariViewController = SFSafariViewController(url: url)
+        safariViewController.preferredControlTintColor = .systemBlue
+        return safariViewController
+    }
+    
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
     }
 }
 
