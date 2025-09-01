@@ -1,93 +1,106 @@
 # InAppWebViewInspector
 
-An iOS app that provides in-app debugging capabilities for WKWebView without relying on Safari Web Inspector. Built with SwiftUI and UIKit for iOS 18.5+.
+An iOS app that provides in-app debugging capabilities for WKWebView without relying on Safari Web Inspector. Built with SwiftUI for iOS 18.5+.
 
 ## Features
 
-### Implementation Options
+### WebView Launch Options
 
-The app supports both SwiftUI and UIKit implementations:
+The app supports three ways to launch web content:
 
-1. **SwiftUI Implementation** - Modern declarative UI with comprehensive debugging features
-2. **UIKit Implementation** - Traditional UIKit-based debugging interface
+1. **Safari Internal** - Opens URLs in SFSafariViewController (in-app browser)
+2. **External Safari** - Opens URLs in the device's Safari app
+3. **Embedded WebView** - Opens URLs in a custom WKWebView with debugging capabilities
 
-### Quick Test Options
+### Debug Panel
 
-Pre-configured test scenarios:
-- **Example.com** - Standard website testing
-- **Debug Page** - Custom debug URL scheme for testing
-- **Apple.com** - Real-world website testing  
-- **HTML with Console Logs** - Data URL with JavaScript for console testing
+The embedded WebView includes a comprehensive Debug Panel accessible via the Debug button in the navigation bar. The panel provides three main tabs:
 
-### Debug Overlay
-
-Both implementations include comprehensive debugging capabilities:
-
-#### Console Monitoring
+#### 1. Console Tab
 Real-time JavaScript console logging with:
-- **Captured Methods**: All console output methods
-- **Visual Indicators**: Color-coded messages and timestamps
-- **Features**: Auto-scroll, clear functionality, selectable text
+- **Captured Methods**: `console.log`, `console.warn`, `console.error`, `console.info`, `console.debug`
+- **Visual Indicators**:
+  - Color-coded messages (error=red, warn=orange, info=blue, debug=purple, log=default)
+  - Icons for each log type
+  - Timestamps for each message
+- **Features**:
+  - Auto-scroll to latest log
+  - Clear button to remove all logs
+  - Selectable text for copying log messages
 
-#### DOM Inspection
-Interactive DOM structure analysis:
-- **Element Selection**: Tap-to-inspect functionality
-- **DOM Structure**: Complete DOM tree visualization
-- **Element Details**: Tag names, IDs, classes, and content
+#### 2. DOM Inspector Tab
+Interactive DOM tree visualization with multiple view modes:
 
-#### Network Monitoring
-Real-time network request interception:
-- **Request Tracking**: All HTTP/HTTPS requests
-- **Custom Schemes**: Support for debug:// URL scheme
-- **Request Details**: Method, URL, headers, and response data
+##### Tree View Mode
+- **Hierarchical Display**: Expandable/collapsible DOM nodes
+- **Element Information**:
+  - Tag names with IDs and classes (e.g., `div#header.nav-bar`)
+  - Inner text content preview (truncated to 50 chars)
+  - Child count indicators
+- **Search Functionality**:
+  - Filters nodes by tag, ID, class, or text content
+  - Highlights matching text in yellow
+  - Shows filtered vs total child count
+  - Requires 2+ characters to activate
 
-#### JavaScript Execution
-Direct JavaScript execution capabilities:
-- **Script Input**: Execute custom JavaScript code
-- **Result Display**: View execution results and errors
-- **DOM Manipulation**: Real-time DOM modifications
+##### Raw Text Mode
+- **HTML Output**: Properly formatted and indented HTML
+- **Text Content**: Includes innerText from elements
+- **Search Functionality**:
+  - Highlights all occurrences in yellow
+  - Case-insensitive matching
+  - Fully selectable text for copying
 
-### Safari Web Inspector Integration
-- **isInspectable**: WebViews configured for Safari debugging
-- **Native Integration**: Seamless Safari Web Inspector access
+##### Floating Action Buttons (FABs)
+- **Search FAB** (top-right, orange): Toggle search input field
+- **Tree View FAB** (bottom-right): Switch to hierarchical tree view
+- **Raw Text FAB** (bottom-right): Switch to HTML text view
+
+#### 3. Info Tab
+Displays current page information:
+- Current URL with selectable text
+- Clean, readable format
+
+### Technical Implementation
+
+#### JavaScript Injection
+The WebView injects custom JavaScript to:
+1. **Console Override**: Intercepts console methods and forwards to native code
+2. **DOM Extraction**: Recursively traverses DOM tree to capture structure and content
+
+#### Native Components
+- **WKWebView Configuration**: Custom message handlers for JavaScript communication
+- **SwiftUI Integration**: Modern declarative UI with proper state management
+- **Thread Safety**: Uses `@MainActor` for safe WebView JavaScript evaluation
 
 ## Architecture
 
 ### Project Structure
 ```
 InAppWebViewInspector/
-├── ContentView.swift                    # Main navigation and test options
-├── DebugWebView.swift                   # Core debugging coordinator
-├── DebugURLSchemeHandler.swift          # Network interception
-├── SwiftUI/
-│   ├── DebugOverlay.swift              # SwiftUI debug interface
-│   ├── DebugWebViewContainer.swift     # SwiftUI WebView wrapper
-│   └── WebViewInspectorDetail.swift    # SwiftUI main view
-├── UIKit/
-│   ├── UIKitDebugOverlayViewController.swift    # UIKit debug interface
-│   ├── UIKitWebViewInspectorViewController.swift # UIKit WebView container
-│   └── UIKitWebViewInspectorWrapper.swift       # UIKit SwiftUI bridge
-├── Item.swift                          # SwiftData session model
-└── InAppWebViewInspectorApp.swift      # App entry point
+├── ContentView.swift           # Main view with WebView type picker
+├── EmbeddedWebView/
+│   ├── WebView.swift           # WKWebView wrapper with console/DOM capabilities
+│   └── EmbeddedWebViewScreen.swift # Container with Debug Panel UI
+├── Item.swift                  # SwiftData model
+└── InAppWebViewInspectorApp.swift # App entry point
 ```
 
 ### Key Components
 
-#### DebugWebView.swift
-- `WebViewCoordinator`: Central debugging coordinator with console capture
-- `ConsoleLog`: Console message data structure
-- **Features**: JavaScript message handling, navigation tracking, DOM inspection
+#### WebView.swift
+- `ConsoleMessage`: Struct for console log data
+- `DOMNode`: Decodable struct for DOM tree representation
+- `WebViewModel`: Manages WebView reference and DOM fetching
+- `ConsoleMessageHandler`: WKScriptMessageHandler for console logs
+- `WebView`: UIViewRepresentable wrapper for WKWebView
 
-#### Debug Overlay Components
-- **Console Panel**: Real-time log display with filtering
-- **DOM Inspector**: Interactive element inspection
-- **Network Monitor**: Request/response tracking
-- **JavaScript Console**: Live script execution
-
-#### Network Debugging
-- `DebugURLSchemeHandler`: Custom URL scheme handler for debug:// URLs
-- **Request Interception**: Captures all network activity
-- **Response Analysis**: Headers, status codes, and content inspection
+#### EmbeddedWebViewScreen.swift
+- `EmbeddedWebViewScreen`: Main container with navigation
+- `DebugPanel`: Tabbed interface for debugging tools
+- `ConsoleView`: Console log display
+- `DOMInspectorView`: DOM tree/raw view with search
+- `DOMNodeView`: Recursive tree node display
 
 ## Requirements
 
@@ -104,58 +117,39 @@ InAppWebViewInspector/
 ## Usage
 
 1. Launch the app
-2. Choose between SwiftUI or UIKit implementation
-3. Select a quick test option or enter a custom URL
-4. Interact with the debug overlay for real-time debugging
+2. Enter a URL in the text field
+3. Select "Embedded WebView" from the picker
+4. Tap "Launch" to open the WebView
+5. Tap "Debug" in the navigation bar to access debugging tools
 
-### Debugging Features
+## Debugging Features
 
-#### Console Monitoring
+### Console Monitoring
 - View all JavaScript console output in real-time
 - Filter by log level using color coding
 - Copy specific log messages for further analysis
 
-#### DOM Inspection
-- Tap any element to inspect its properties
-- View complete DOM structure
-- Explore element attributes and content
+### DOM Inspection
+- Explore the complete DOM structure
+- Search for specific elements or content
+- View element attributes and text content
+- Export HTML structure via copy/paste
 
-#### Network Analysis
-- Monitor all network requests in real-time
-- Inspect request/response details
-- Test custom URL schemes
-
-#### JavaScript Development
-- Execute custom JavaScript in the WebView context
-- Test DOM manipulations live
-- Debug script execution with immediate feedback
-
-## Implementation Details
-
-### SwiftUI Implementation
-- Modern declarative UI architecture
-- State-driven debugging interface
-- Seamless integration with SwiftData for session management
-
-### UIKit Implementation
-- Traditional view controller architecture
-- UIKit-native debugging controls
-- Bridge to SwiftUI for main app integration
-
-### Dual Architecture Benefits
-- Compare implementation approaches
-- Framework-specific debugging capabilities
-- Educational value for iOS developers
+### Search Capabilities
+- Global search across DOM tree
+- Highlight matching elements
+- Filter tree to show only relevant branches
+- Case-insensitive text matching
 
 ## Future Enhancements
 
 Potential areas for expansion:
-- Performance metrics monitoring
-- Memory usage analysis
+- Network request interception and monitoring
+- JavaScript execution console
 - CSS style inspection
-- Cookie and storage management
-- Advanced network filtering
-- Export debugging data
+- Performance metrics
+- Local storage inspection
+- Cookie management
 
 ## License
 
