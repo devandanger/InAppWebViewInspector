@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8A3498CD2E65D8F500025788 /* WKDevKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8A3498CC2E65D8F500025788 /* WKDevKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		8A15CDE62E54EAD3007A7616 /* InAppWebViewInspector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InAppWebViewInspector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A3498CD2E65D8F500025788 /* WKDevKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = InAppWebViewInspector;
 			packageProductDependencies = (
+				8A3498CC2E65D8F500025788 /* WKDevKit */,
 			);
 			productName = InAppWebViewInspector;
 			productReference = 8A15CDE62E54EAD3007A7616 /* InAppWebViewInspector.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = 8A15CDDD2E54EAD3007A7616;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				8A3498CB2E65D8F500025788 /* XCLocalSwiftPackageReference "WKDevKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8A15CDE72E54EAD3007A7616 /* Products */;
 			projectDirPath = "";
@@ -324,6 +333,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		8A3498CB2E65D8F500025788 /* XCLocalSwiftPackageReference "WKDevKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = WKDevKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		8A3498CC2E65D8F500025788 /* WKDevKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WKDevKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8A15CDDE2E54EAD3007A7616 /* Project object */;
 }

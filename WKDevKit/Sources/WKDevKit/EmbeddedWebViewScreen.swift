@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct EmbeddedWebViewScreen: View {
-    public let urlString: String
+    let urlString: String
     
     public init(urlString: String) {
         self.urlString = urlString

@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-public struct ConsoleView: View {
-    public let logs: [ConsoleMessage]
+struct ConsoleView: View {
+    let logs: [ConsoleMessage]
     
-    public init(logs: [ConsoleMessage]) {
+    init(logs: [ConsoleMessage]) {
         self.logs = logs
     }
     
-    public var body: some View {
+    var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
@@ -46,10 +46,10 @@ public struct ConsoleView: View {
     }
 }
 
-public struct ConsoleLogRow: View {
-    public let log: ConsoleMessage
+struct ConsoleLogRow: View {
+    let log: ConsoleMessage
     
-    public init(log: ConsoleMessage) {
+    init(log: ConsoleMessage) {
         self.log = log
     }
     
@@ -83,7 +83,7 @@ public struct ConsoleLogRow: View {
         }
     }
     
-    public var body: some View {
+    var body: some View {
         HStack(alignment: .top, spacing: 8) {
             Image(systemName: logIcon)
                 .foregroundColor(logColor)

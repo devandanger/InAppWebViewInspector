@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-public struct DOMInspectorView: View {
-    public let domTree: DOMNode?
-    public let isLoading: Bool
-    public let onRefresh: () -> Void
+struct DOMInspectorView: View {
+    let domTree: DOMNode?
+    let isLoading: Bool
+    let onRefresh: () -> Void
     
-    public init(domTree: DOMNode?, isLoading: Bool, onRefresh: @escaping () -> Void) {
+    init(domTree: DOMNode?, isLoading: Bool, onRefresh: @escaping () -> Void) {
         self.domTree = domTree
         self.isLoading = isLoading
         self.onRefresh = onRefresh
@@ -21,7 +21,7 @@ public struct DOMInspectorView: View {
     @State private var searchText = ""
     @State private var showingSearch = false
     
-    public enum DOMViewMode {
+    enum DOMViewMode {
         case tree
         case raw
     }
@@ -49,7 +49,7 @@ public struct DOMInspectorView: View {
         return attributed
     }
     
-    public var body: some View {
+    var body: some View {
         ZStack {
             // Main content background
             Color.white
@@ -215,11 +215,11 @@ public struct DOMInspectorView: View {
     }
 }
 
-public struct DOMNodeView: View {
-    public let node: DOMNode
-    public let searchText: String
+struct DOMNodeView: View {
+    let node: DOMNode
+    let searchText: String
     
-    public init(node: DOMNode, searchText: String) {
+    init(node: DOMNode, searchText: String) {
         self.node = node
         self.searchText = searchText
     }
@@ -288,7 +288,7 @@ public struct DOMNodeView: View {
         return attributed
     }
     
-    public var body: some View {
+    var body: some View {
         if matchesSearch {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 4) {

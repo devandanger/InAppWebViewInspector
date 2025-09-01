@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct DebugPanel: View {
+struct DebugPanel: View {
     let url: URL
     @Binding var consoleLogs: [ConsoleMessage]
     let webViewModel: WebViewModel
@@ -18,7 +18,7 @@ public struct DebugPanel: View {
     @State private var webStorageItems: [WebStorageItem] = []
     @State private var isLoadingStorage = false
     
-    public var body: some View {
+    var body: some View {
         NavigationView {
             DebugTabView(
                 url: url,

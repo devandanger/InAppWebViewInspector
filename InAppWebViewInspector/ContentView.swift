@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import SafariServices
+import WKDevKit
 
 enum WebViewType: String, CaseIterable {
     case safariInternal = "Safari Internal"
@@ -20,9 +21,6 @@ enum WebViewType: String, CaseIterable {
 }
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-    
     @State private var urlText: String = "https://www.google.com"
     @State private var selectedWebViewType: WebViewType = .embeddedWebView
     @State private var showingSafariView = false
@@ -86,21 +84,6 @@ struct ContentView: View {
             showingEmbeddedWebView = true
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
-    }
 }
 
 struct SafariView: UIViewControllerRepresentable {
@@ -118,5 +101,4 @@ struct SafariView: UIViewControllerRepresentable {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }
