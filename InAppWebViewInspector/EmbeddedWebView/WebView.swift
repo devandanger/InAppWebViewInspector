@@ -37,6 +37,12 @@ struct ConsoleMessage: Identifiable {
     let timestamp: Date
 }
 
+struct LocalStorageItem: Identifiable {
+    let id = UUID()
+    let key: String
+    let value: String
+}
+
 struct DOMNode: Identifiable, Decodable {
     let id = UUID()
     let tag: String
@@ -87,6 +93,32 @@ struct DOMNode: Identifiable, Decodable {
 
 class WebViewModel: ObservableObject {
     var webView: WKWebView?
+    
+    @MainActor
+    func fetchLocalStorage() async -> [LocalStorageItem] {
+        guard let webView = webView else { return [] }
+        
+        let script = """
+        (function() {
+            return Object.entries(localStorage);
+        })();
+        """
+        
+        do {
+            let result = try await webView.evaluateJavaScript(script)
+            if let entries = result as? [[Any]] {
+                return entries.compactMap { entry in
+                    guard entry.count == 2,
+                          let key = entry[0] as? String,
+                          let value = entry[1] as? String else { return nil }
+                    return LocalStorageItem(key: key, value: value)
+                }
+            }
+        } catch {
+            print("Error fetching localStorage: \(error)")
+        }
+        return []
+    }
     
     @MainActor
     func fetchDOMTree() async -> DOMNode? {

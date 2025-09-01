@@ -45,105 +45,6 @@ struct EmbeddedWebViewScreen: View {
     }
 }
 
-struct DebugPanel: View {
-    let url: URL
-    @Binding var consoleLogs: [ConsoleMessage]
-    let webViewModel: WebViewModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab = 0
-    @State private var domTree: DOMNode?
-    @State private var isLoadingDOM = false
-    
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color.white
-                    .ignoresSafeArea()
-                
-                TabView(selection: $selectedTab) {
-                    // Console Tab
-                    ConsoleView(logs: consoleLogs)
-                        .tabItem {
-                            Label("Console", systemImage: "terminal")
-                        }
-                        .tag(0)
-                    
-                    // DOM Tab
-                    DOMInspectorView(domTree: domTree, isLoading: isLoadingDOM, onRefresh: fetchDOM)
-                        .tabItem {
-                            Label("DOM", systemImage: "doc.text.magnifyingglass")
-                        }
-                        .tag(1)
-                    
-                    // Info Tab
-                    VStack(alignment: .leading, spacing: 20) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Current URL")
-                                .font(.headline)
-                            Text(url.absoluteString)
-                                .font(.system(.body, design: .monospaced))
-                                .foregroundColor(.secondary)
-                                .textSelection(.enabled)
-                        }
-                        .padding()
-                        .background(Color.gray.opacity(0.1))
-                        .cornerRadius(8)
-                        
-                        Spacer()
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.white)
-                    .tabItem {
-                        Label("Info", systemImage: "info.circle")
-                    }
-                    .tag(2)
-                }
-            }
-            .navigationTitle("Debug Panel")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        dismiss()
-                    }
-                }
-                
-                if selectedTab == 0 {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Clear") {
-                            consoleLogs.removeAll()
-                        }
-                    }
-                } else if selectedTab == 1 {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button("Refresh") {
-                            fetchDOM()
-                        }
-                    }
-                }
-            }
-        }
-        .onAppear {
-            if selectedTab == 1 && domTree == nil {
-                fetchDOM()
-            }
-        }
-        .onChange(of: selectedTab) { newValue in
-            if newValue == 1 && domTree == nil {
-                fetchDOM()
-            }
-        }
-    }
-    
-    private func fetchDOM() {
-        isLoadingDOM = true
-        Task {
-            domTree = await webViewModel.fetchDOMTree()
-            isLoadingDOM = false
-        }
-    }
-}
 
 struct ConsoleView: View {
     let logs: [ConsoleMessage]
@@ -587,3 +488,5 @@ struct DOMNodeView: View {
         }
     }
 }
+
+
