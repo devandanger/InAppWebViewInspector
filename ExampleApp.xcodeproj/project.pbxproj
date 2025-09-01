@@ -11,7 +11,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8A15CDE62E54EAD3007A7616 /* InAppWebViewInspector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InAppWebViewInspector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A15CDE62E54EAD3007A7616 /* ExampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		8A15CDE72E54EAD3007A7616 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8A15CDE62E54EAD3007A7616 /* InAppWebViewInspector.app */,
+				8A15CDE62E54EAD3007A7616 /* ExampleApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,9 +53,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8A15CDE52E54EAD3007A7616 /* InAppWebViewInspector */ = {
+		8A15CDE52E54EAD3007A7616 /* ExampleApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8A15CE092E54EAD4007A7616 /* Build configuration list for PBXNativeTarget "InAppWebViewInspector" */;
+			buildConfigurationList = 8A15CE092E54EAD4007A7616 /* Build configuration list for PBXNativeTarget "ExampleApp" */;
 			buildPhases = (
 				8A15CDE22E54EAD3007A7616 /* Sources */,
 				8A15CDE32E54EAD3007A7616 /* Frameworks */,
@@ -68,12 +68,12 @@
 			fileSystemSynchronizedGroups = (
 				8A15CDE82E54EAD3007A7616 /* ExampleApp */,
 			);
-			name = InAppWebViewInspector;
+			name = ExampleApp;
 			packageProductDependencies = (
 				8A3498CC2E65D8F500025788 /* WKDevKit */,
 			);
 			productName = InAppWebViewInspector;
-			productReference = 8A15CDE62E54EAD3007A7616 /* InAppWebViewInspector.app */;
+			productReference = 8A15CDE62E54EAD3007A7616 /* ExampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -91,7 +91,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8A15CDE12E54EAD3007A7616 /* Build configuration list for PBXProject "InAppWebViewInspector" */;
+			buildConfigurationList = 8A15CDE12E54EAD3007A7616 /* Build configuration list for PBXProject "ExampleApp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -108,7 +108,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8A15CDE52E54EAD3007A7616 /* InAppWebViewInspector */,
+				8A15CDE52E54EAD3007A7616 /* ExampleApp */,
 			);
 		};
 /* End PBXProject section */
@@ -314,7 +314,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8A15CDE12E54EAD3007A7616 /* Build configuration list for PBXProject "InAppWebViewInspector" */ = {
+		8A15CDE12E54EAD3007A7616 /* Build configuration list for PBXProject "ExampleApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8A15CE072E54EAD4007A7616 /* Debug */,
@@ -323,7 +323,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8A15CE092E54EAD4007A7616 /* Build configuration list for PBXNativeTarget "InAppWebViewInspector" */ = {
+		8A15CE092E54EAD4007A7616 /* Build configuration list for PBXNativeTarget "ExampleApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8A15CE0A2E54EAD4007A7616 /* Debug */,

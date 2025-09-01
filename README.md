@@ -146,6 +146,18 @@ InAppWebViewInspector/
 2. Select your target device or simulator
 3. Build and run (Cmd+R)
 
+## Screenshots
+
+### DOM Inspector
+![DOM Inspector](assets/dom-viewer.png)
+
+The DOM Inspector provides both tree view and raw HTML modes with powerful search capabilities.
+
+### Storage Inspector  
+![Storage Inspector](assets/storage-viewer.png)
+
+The Storage Inspector shows localStorage, sessionStorage, and cookies in organized sections.
+
 ## Usage
 
 1. Launch the app
