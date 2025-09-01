@@ -42,10 +42,11 @@ struct DOMNode: Identifiable, Decodable {
     let tag: String
     let idAttr: String
     let className: String
+    let innerText: String?
     let children: [DOMNode]
     
     enum CodingKeys: String, CodingKey {
-        case tag, idAttr = "id", className, children
+        case tag, idAttr = "id", className, innerText, children
     }
     
     func toRawText(indent: Int = 0) -> String {
@@ -60,14 +61,24 @@ struct DOMNode: Identifiable, Decodable {
             result += " class=\"\(className)\""
         }
         
-        if children.isEmpty {
+        if children.isEmpty && (innerText == nil || innerText!.isEmpty) {
             result += " />"
         } else {
             result += ">"
+            
+            // Add inner text if it exists and there are no children
+            if children.isEmpty, let text = innerText, !text.isEmpty {
+                result += text
+            }
+            
             for child in children {
                 result += "\n" + child.toRawText(indent: indent + 1)
             }
-            result += "\n" + indentString + "</\(tag.lowercased())>"
+            
+            if !children.isEmpty {
+                result += "\n" + indentString
+            }
+            result += "</\(tag.lowercased())>"
         }
         
         return result
@@ -83,12 +94,25 @@ class WebViewModel: ObservableObject {
         let script = """
         (function() {
             function getDomTree(element) {
+                // Get direct text content (not from children)
+                let directText = "";
+                for (let node of element.childNodes) {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        const text = node.textContent.trim();
+                        if (text) {
+                            directText += (directText ? " " : "") + text;
+                        }
+                    }
+                }
+                
                 const obj = {
                     tag: element.tagName || "",
                     id: element.id || "",
                     className: (typeof element.className === 'string' ? element.className : element.className?.baseVal || "") || "",
+                    innerText: element.children.length === 0 ? (directText || element.innerText?.trim() || null) : (directText || null),
                     children: []
                 };
+                
                 for (let child of element.children) {
                     obj.children.push(getDomTree(child));
                 }
