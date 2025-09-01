@@ -16,16 +16,6 @@
 			path = InAppWebViewInspector;
 			sourceTree = "<group>";
 		};
-		8A15CDF82E54EAD4007A7616 /* InAppWebViewInspectorTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = InAppWebViewInspectorTests;
-			sourceTree = "<group>";
-		};
-		8A15CE022E54EAD4007A7616 /* InAppWebViewInspectorUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = InAppWebViewInspectorUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,8 +33,6 @@
 			isa = PBXGroup;
 			children = (
 				8A15CDE82E54EAD3007A7616 /* InAppWebViewInspector */,
-				8A15CDF82E54EAD4007A7616 /* InAppWebViewInspectorTests */,
-				8A15CE022E54EAD4007A7616 /* InAppWebViewInspectorUITests */,
 				8A15CDE72E54EAD3007A7616 /* Products */,
 			);
 			sourceTree = "<group>";
