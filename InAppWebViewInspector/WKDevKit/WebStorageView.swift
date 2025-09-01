@@ -7,12 +7,18 @@
 
 import SwiftUI
 
-struct WebStorageView: View {
-    let items: [WebStorageItem]
-    let isLoading: Bool
-    let onRefresh: () -> Void
+public struct WebStorageView: View {
+    public let items: [WebStorageItem]
+    public let isLoading: Bool
+    public let onRefresh: () -> Void
     
-    var body: some View {
+    public init(items: [WebStorageItem], isLoading: Bool, onRefresh: @escaping () -> Void) {
+        self.items = items
+        self.isLoading = isLoading
+        self.onRefresh = onRefresh
+    }
+    
+    public var body: some View {
         Group {
             if isLoading {
                 VStack {
@@ -56,11 +62,11 @@ struct WebStorageView: View {
     }
 }
 
-struct WebStorageSection: View {
+public struct WebStorageSection: View {
     let storageType: WebStorageType
     let items: [WebStorageItem]
     
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             // Section Header
             HStack {
@@ -87,7 +93,7 @@ struct WebStorageSection: View {
     }
 }
 
-struct WebStorageItemRow: View {
+public struct WebStorageItemRow: View {
     let item: WebStorageItem
     @State private var isExpanded = false
     
@@ -99,7 +105,7 @@ struct WebStorageItemRow: View {
         return item.value
     }
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {

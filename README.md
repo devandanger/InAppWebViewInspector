@@ -56,7 +56,19 @@ Interactive DOM tree visualization with multiple view modes:
 - **Tree View FAB** (bottom-right): Switch to hierarchical tree view
 - **Raw Text FAB** (bottom-right): Switch to HTML text view
 
-#### 3. Info Tab
+#### 3. Web Storage Tab
+Comprehensive web storage inspection with automatic loading:
+- **Local Storage**: Key-value pairs stored in localStorage
+- **Session Storage**: Temporary session-based storage items
+- **Cookies**: Document cookies with key-value parsing
+- **Features**:
+  - Organized by storage type with section headers
+  - Item count display for each section
+  - Expandable long values (100+ characters)
+  - Auto-refresh when tab becomes visible
+  - Selectable text for copying
+
+#### 4. Info Tab
 Displays current page information:
 - Current URL with selectable text
 - Clean, readable format
@@ -67,6 +79,7 @@ Displays current page information:
 The WebView injects custom JavaScript to:
 1. **Console Override**: Intercepts console methods and forwards to native code
 2. **DOM Extraction**: Recursively traverses DOM tree to capture structure and content
+3. **Storage Access**: Extracts localStorage, sessionStorage, and document cookies
 
 #### Native Components
 - **WKWebView Configuration**: Custom message handlers for JavaScript communication
@@ -80,27 +93,46 @@ The WebView injects custom JavaScript to:
 InAppWebViewInspector/
 ├── ContentView.swift           # Main view with WebView type picker
 ├── EmbeddedWebView/
-│   ├── WebView.swift           # WKWebView wrapper with console/DOM capabilities
-│   └── EmbeddedWebViewScreen.swift # Container with Debug Panel UI
+│   ├── WebView.swift           # WKWebView wrapper with console/DOM/storage capabilities
+│   ├── EmbeddedWebViewScreen.swift # Container screen
+│   ├── DebugPanel.swift        # Debug panel with navigation
+│   ├── DebugTabView.swift      # Tabbed debugging interface
+│   ├── WebStorageView.swift    # Web storage inspection
+│   └── InfoView.swift          # Page information display
 ├── Item.swift                  # SwiftData model
 └── InAppWebViewInspectorApp.swift # App entry point
 ```
 
 ### Key Components
 
-#### WebView.swift
+#### EmbeddedWebView/WebView.swift
 - `ConsoleMessage`: Struct for console log data
+- `WebStorageItem`: Struct for storage data (localStorage, sessionStorage, cookies)
+- `WebStorageType`: Enum for storage type classification
 - `DOMNode`: Decodable struct for DOM tree representation
-- `WebViewModel`: Manages WebView reference and DOM fetching
+- `WebViewModel`: Manages WebView reference and data fetching
 - `ConsoleMessageHandler`: WKScriptMessageHandler for console logs
 - `WebView`: UIViewRepresentable wrapper for WKWebView
 
-#### EmbeddedWebViewScreen.swift
-- `EmbeddedWebViewScreen`: Main container with navigation
-- `DebugPanel`: Tabbed interface for debugging tools
-- `ConsoleView`: Console log display
-- `DOMInspectorView`: DOM tree/raw view with search
-- `DOMNodeView`: Recursive tree node display
+#### EmbeddedWebView/DebugPanel.swift
+- `DebugPanel`: Main debug panel with navigation and state management
+
+#### EmbeddedWebView/DebugTabView.swift
+- `DebugTabView`: Tabbed interface for debugging tools
+
+#### EmbeddedWebView/WebStorageView.swift
+- `WebStorageView`: Storage inspection with sectioned display
+- `WebStorageSection`: Section headers for different storage types
+- `WebStorageItemRow`: Individual storage item display
+
+#### EmbeddedWebView/InfoView.swift
+- `InfoView`: Current page information display
+
+#### Additional Views
+- `ConsoleView`: Console log display with auto-scroll
+- `ConsoleLogRow`: Individual console message display
+- `DOMInspectorView`: DOM tree/raw view with search and FABs
+- `DOMNodeView`: Recursive tree node display with search highlighting
 
 ## Requirements
 
@@ -135,6 +167,12 @@ InAppWebViewInspector/
 - View element attributes and text content
 - Export HTML structure via copy/paste
 
+### Web Storage Inspection
+- Complete localStorage, sessionStorage, and cookie access
+- Organized sectioned display by storage type
+- Auto-loading when storage tab is accessed
+- Expandable values for long content
+
 ### Search Capabilities
 - Global search across DOM tree
 - Highlight matching elements
@@ -148,8 +186,8 @@ Potential areas for expansion:
 - JavaScript execution console
 - CSS style inspection
 - Performance metrics
-- Local storage inspection
-- Cookie management
+- Advanced cookie management features
+- Storage item editing capabilities
 
 ## License
 

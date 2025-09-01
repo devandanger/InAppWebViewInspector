@@ -1,5 +1,5 @@
 //
-//  EmbeddedWebViewScreen.swift
+//  DOMInspectorView.swift
 //  InAppWebViewInspector
 //
 //  Created on 8/31/25.
@@ -7,155 +7,21 @@
 
 import SwiftUI
 
-struct EmbeddedWebViewScreen: View {
-    let urlString: String
-    @Environment(\.dismiss) private var dismiss
-    @State private var showingDebugPanel = false
-    @State private var consoleLogs: [ConsoleMessage] = []
-    @StateObject private var webViewModel = WebViewModel()
+public struct DOMInspectorView: View {
+    public let domTree: DOMNode?
+    public let isLoading: Bool
+    public let onRefresh: () -> Void
     
-    var body: some View {
-        NavigationView {
-            if let url = URL(string: urlString) {
-                WebView(url: url, consoleLogs: $consoleLogs, viewModel: webViewModel)
-                    .ignoresSafeArea(edges: .bottom)
-                    .navigationTitle("Embedded WebView")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Close") {
-                                dismiss()
-                            }
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("Debug") {
-                                showingDebugPanel = true
-                            }
-                        }
-                    }
-                    .sheet(isPresented: $showingDebugPanel) {
-                        DebugPanel(url: url, consoleLogs: $consoleLogs, webViewModel: webViewModel)
-                    }
-            } else {
-                Text("Invalid URL")
-                    .font(.headline)
-            }
-        }
+    public init(domTree: DOMNode?, isLoading: Bool, onRefresh: @escaping () -> Void) {
+        self.domTree = domTree
+        self.isLoading = isLoading
+        self.onRefresh = onRefresh
     }
-}
-
-
-struct ConsoleView: View {
-    let logs: [ConsoleMessage]
-    
-    var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    if logs.isEmpty {
-                        Text("No console logs yet")
-                            .foregroundColor(.secondary)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        ForEach(logs) { log in
-                            ConsoleLogRow(log: log)
-                                .id(log.id)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.white)
-            .onChange(of: logs.count) { _ in
-                if let lastLog = logs.last {
-                    withAnimation {
-                        proxy.scrollTo(lastLog.id, anchor: .bottom)
-                    }
-                }
-            }
-        }
-        .background(Color.white)
-    }
-}
-
-struct ConsoleLogRow: View {
-    let log: ConsoleMessage
-    
-    var logColor: Color {
-        switch log.method {
-        case "error":
-            return .red
-        case "warn":
-            return .orange
-        case "info":
-            return .blue
-        case "debug":
-            return .purple
-        default:
-            return .primary
-        }
-    }
-    
-    var logIcon: String {
-        switch log.method {
-        case "error":
-            return "xmark.circle.fill"
-        case "warn":
-            return "exclamationmark.triangle.fill"
-        case "info":
-            return "info.circle.fill"
-        case "debug":
-            return "ant.fill"
-        default:
-            return "chevron.right.circle.fill"
-        }
-    }
-    
-    var body: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Image(systemName: logIcon)
-                .foregroundColor(logColor)
-                .font(.caption)
-                .frame(width: 20)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text(log.args)
-                    .font(.system(.caption, design: .monospaced))
-                    .foregroundColor(logColor)
-                    .textSelection(.enabled)
-                    .fixedSize(horizontal: false, vertical: true)
-                
-                Text(log.timestamp, style: .time)
-                    .font(.system(size: 10))
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(Color.white)
-        .overlay(
-            Rectangle()
-                .frame(height: 0.5)
-                .foregroundColor(Color.gray.opacity(0.2)),
-            alignment: .bottom
-        )
-    }
-}
-
-struct DOMInspectorView: View {
-    let domTree: DOMNode?
-    let isLoading: Bool
-    let onRefresh: () -> Void
     @State private var viewMode: DOMViewMode = .tree
     @State private var searchText = ""
     @State private var showingSearch = false
     
-    enum DOMViewMode {
+    public enum DOMViewMode {
         case tree
         case raw
     }
@@ -183,7 +49,7 @@ struct DOMInspectorView: View {
         return attributed
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             // Main content background
             Color.white
@@ -349,9 +215,14 @@ struct DOMInspectorView: View {
     }
 }
 
-struct DOMNodeView: View {
-    let node: DOMNode
-    let searchText: String
+public struct DOMNodeView: View {
+    public let node: DOMNode
+    public let searchText: String
+    
+    public init(node: DOMNode, searchText: String) {
+        self.node = node
+        self.searchText = searchText
+    }
     @State private var isExpanded = true
     
     var nodeLabel: String {
@@ -417,7 +288,7 @@ struct DOMNodeView: View {
         return attributed
     }
     
-    var body: some View {
+    public var body: some View {
         if matchesSearch {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 4) {
@@ -488,5 +359,3 @@ struct DOMNodeView: View {
         }
     }
 }
-
-

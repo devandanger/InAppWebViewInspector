@@ -9,14 +9,14 @@ import SwiftUI
 import WebKit
 import Combine
 
-class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
+public class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
     let onMessage: (ConsoleMessage) -> Void
     
     init(onMessage: @escaping (ConsoleMessage) -> Void) {
         self.onMessage = onMessage
     }
     
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let dict = message.body as? [String: Any],
               let method = dict["method"] as? String,
               let args = dict["args"] as? [Any] else { return }
@@ -30,39 +30,51 @@ class ConsoleMessageHandler: NSObject, WKScriptMessageHandler {
     }
 }
 
-struct ConsoleMessage: Identifiable {
-    let id = UUID()
-    let method: String
-    let args: String
-    let timestamp: Date
+public struct ConsoleMessage: Identifiable {
+    public let id = UUID()
+    public let method: String
+    public let args: String
+    public let timestamp: Date
+    
+    public init(method: String, args: String, timestamp: Date) {
+        self.method = method
+        self.args = args
+        self.timestamp = timestamp
+    }
 }
 
-struct WebStorageItem: Identifiable {
-    let id = UUID()
-    let key: String
-    let value: String
-    let type: WebStorageType
+public struct WebStorageItem: Identifiable {
+    public let id = UUID()
+    public let key: String
+    public let value: String
+    public let type: WebStorageType
+    
+    public init(key: String, value: String, type: WebStorageType) {
+        self.key = key
+        self.value = value
+        self.type = type
+    }
 }
 
-enum WebStorageType: String, CaseIterable {
+public enum WebStorageType: String, CaseIterable {
     case localStorage = "Local Storage"
     case sessionStorage = "Session Storage"
     case cookies = "Cookies"
 }
 
-struct DOMNode: Identifiable, Decodable {
-    let id = UUID()
-    let tag: String
-    let idAttr: String
-    let className: String
-    let innerText: String?
-    let children: [DOMNode]
+public struct DOMNode: Identifiable, Decodable {
+    public let id = UUID()
+    public let tag: String
+    public let idAttr: String
+    public let className: String
+    public let innerText: String?
+    public let children: [DOMNode]
     
     enum CodingKeys: String, CodingKey {
         case tag, idAttr = "id", className, innerText, children
     }
     
-    func toRawText(indent: Int = 0) -> String {
+    public func toRawText(indent: Int = 0) -> String {
         let indentString = String(repeating: "  ", count: indent)
         var result = indentString + "<\(tag.lowercased())"
         
@@ -98,11 +110,13 @@ struct DOMNode: Identifiable, Decodable {
     }
 }
 
-class WebViewModel: ObservableObject {
-    var webView: WKWebView?
+public class WebViewModel: ObservableObject {
+    public var webView: WKWebView?
+    
+    public init() {}
     
     @MainActor
-    func fetchWebStorage() async -> [WebStorageItem] {
+    public func fetchWebStorage() async -> [WebStorageItem] {
         guard let webView = webView else { return [] }
         
         var allItems: [WebStorageItem] = []
@@ -176,7 +190,7 @@ class WebViewModel: ObservableObject {
     }
     
     @MainActor
-    func fetchDOMTree() async -> DOMNode? {
+    public func fetchDOMTree() async -> DOMNode? {
         guard let webView = webView else { return nil }
         
         let script = """
@@ -224,16 +238,22 @@ class WebViewModel: ObservableObject {
     }
 }
 
-struct WebView: UIViewRepresentable {
-    let url: URL
-    @Binding var consoleLogs: [ConsoleMessage]
-    let viewModel: WebViewModel
+public struct WebView: UIViewRepresentable {
+    public let url: URL
+    @Binding public var consoleLogs: [ConsoleMessage]
+    public let viewModel: WebViewModel
     
-    func makeCoordinator() -> Coordinator {
+    public init(url: URL, consoleLogs: Binding<[ConsoleMessage]>, viewModel: WebViewModel) {
+        self.url = url
+        self._consoleLogs = consoleLogs
+        self.viewModel = viewModel
+    }
+    
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
     
-    func makeUIView(context: Context) -> WKWebView {
+    public func makeUIView(context: Context) -> WKWebView {
         let configuration = WKWebViewConfiguration()
         
         // Inject console override script
@@ -272,10 +292,10 @@ struct WebView: UIViewRepresentable {
         return webView
     }
     
-    func updateUIView(_ webView: WKWebView, context: Context) {
+    public func updateUIView(_ webView: WKWebView, context: Context) {
     }
     
-    class Coordinator: NSObject {
+    public class Coordinator: NSObject {
         var parent: WebView
         
         init(_ parent: WebView) {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DebugTabView: View {
+public struct DebugTabView: View {
     let url: URL
     @Binding var selectedTab: Int
     @Binding var consoleLogs: [ConsoleMessage]
@@ -18,7 +18,7 @@ struct DebugTabView: View {
     let isLoadingDOM: Bool
     let onRefreshDOM: () -> Void
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             

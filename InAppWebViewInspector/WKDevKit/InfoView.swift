@@ -7,10 +7,14 @@
 
 import SwiftUI
 
-struct InfoView: View {
-    let url: URL
+public struct InfoView: View {
+    public let url: URL
     
-    var body: some View {
+    public init(url: URL) {
+        self.url = url
+    }
+    
+    public var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Current URL")
