@@ -88,6 +88,7 @@ struct DOMNode: Identifiable, Decodable {
 class WebViewModel: ObservableObject {
     var webView: WKWebView?
     
+    @MainActor
     func fetchDOMTree() async -> DOMNode? {
         guard let webView = webView else { return nil }
         
