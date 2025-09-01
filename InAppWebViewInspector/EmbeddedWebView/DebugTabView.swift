@@ -11,7 +11,7 @@ struct DebugTabView: View {
     let url: URL
     @Binding var selectedTab: Int
     @Binding var consoleLogs: [ConsoleMessage]
-    let localStorageItems: [LocalStorageItem]
+    let webStorageItems: [WebStorageItem]
     let isLoadingStorage: Bool
     let onRefreshStorage: () -> Void
     let domTree: DOMNode?
@@ -31,7 +31,7 @@ struct DebugTabView: View {
                     .tabItem { Label("DOM", systemImage: "doc.text.magnifyingglass") }
                     .tag(1)
                 
-                LocalStorageView(items: localStorageItems, isLoading: isLoadingStorage, onRefresh: onRefreshStorage)
+                WebStorageView(items: webStorageItems, isLoading: isLoadingStorage, onRefresh: onRefreshStorage)
                     .tabItem { Label("Storage", systemImage: "internaldrive") }
                     .tag(2)
                 

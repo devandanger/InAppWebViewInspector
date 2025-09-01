@@ -1,5 +1,5 @@
 //
-//  LocalStorageView.swift
+//  WebStorageView.swift
 //  InAppWebViewInspector
 //
 //  Created on 8/31/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct LocalStorageView: View {
-    let items: [LocalStorageItem]
+struct WebStorageView: View {
+    let items: [WebStorageItem]
     let isLoading: Bool
     let onRefresh: () -> Void
     
@@ -27,7 +27,7 @@ struct LocalStorageView: View {
                     Image(systemName: "internaldrive")
                         .font(.largeTitle)
                         .foregroundColor(.secondary)
-                    Text("No localStorage items")
+                    Text("No storage items")
                         .foregroundColor(.secondary)
                     Button("Load Storage", action: onRefresh)
                         .buttonStyle(.bordered)
@@ -37,8 +37,11 @@ struct LocalStorageView: View {
             } else {
                 ScrollView {
                     VStack(spacing: 0) {
-                        ForEach(items) { item in
-                            LocalStorageItemRow(item: item)
+                        ForEach(WebStorageType.allCases, id: \.self) { storageType in
+                            let sectionItems = items.filter { $0.type == storageType }
+                            if !sectionItems.isEmpty {
+                                WebStorageSection(storageType: storageType, items: sectionItems)
+                            }
                         }
                     }
                 }
@@ -53,8 +56,39 @@ struct LocalStorageView: View {
     }
 }
 
-struct LocalStorageItemRow: View {
-    let item: LocalStorageItem
+struct WebStorageSection: View {
+    let storageType: WebStorageType
+    let items: [WebStorageItem]
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Section Header
+            HStack {
+                Text(storageType.rawValue)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Text("(\(items.count))")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(Color.gray.opacity(0.1))
+            
+            // Section Items
+            ForEach(items) { item in
+                WebStorageItemRow(item: item)
+            }
+        }
+    }
+}
+
+struct WebStorageItemRow: View {
+    let item: WebStorageItem
     @State private var isExpanded = false
     
     var truncatedValue: String {

@@ -15,7 +15,7 @@ struct DebugPanel: View {
     @State private var selectedTab = 0
     @State private var domTree: DOMNode?
     @State private var isLoadingDOM = false
-    @State private var localStorageItems: [LocalStorageItem] = []
+    @State private var webStorageItems: [WebStorageItem] = []
     @State private var isLoadingStorage = false
     
     var body: some View {
@@ -24,9 +24,9 @@ struct DebugPanel: View {
                 url: url,
                 selectedTab: $selectedTab,
                 consoleLogs: $consoleLogs,
-                localStorageItems: localStorageItems,
+                webStorageItems: webStorageItems,
                 isLoadingStorage: isLoadingStorage,
-                onRefreshStorage: fetchLocalStorage,
+                onRefreshStorage: fetchWebStorage,
                 domTree: domTree,
                 isLoadingDOM: isLoadingDOM,
                 onRefreshDOM: fetchDOM
@@ -73,10 +73,10 @@ struct DebugPanel: View {
         }
     }
     
-    private func fetchLocalStorage() {
+    private func fetchWebStorage() {
         isLoadingStorage = true
         Task {
-            localStorageItems = await webViewModel.fetchLocalStorage()
+            webStorageItems = await webViewModel.fetchWebStorage()
             isLoadingStorage = false
         }
     }

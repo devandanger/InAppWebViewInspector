@@ -37,10 +37,17 @@ struct ConsoleMessage: Identifiable {
     let timestamp: Date
 }
 
-struct LocalStorageItem: Identifiable {
+struct WebStorageItem: Identifiable {
     let id = UUID()
     let key: String
     let value: String
+    let type: WebStorageType
+}
+
+enum WebStorageType: String, CaseIterable {
+    case localStorage = "Local Storage"
+    case sessionStorage = "Session Storage"
+    case cookies = "Cookies"
 }
 
 struct DOMNode: Identifiable, Decodable {
@@ -95,29 +102,77 @@ class WebViewModel: ObservableObject {
     var webView: WKWebView?
     
     @MainActor
-    func fetchLocalStorage() async -> [LocalStorageItem] {
+    func fetchWebStorage() async -> [WebStorageItem] {
         guard let webView = webView else { return [] }
         
-        let script = """
+        var allItems: [WebStorageItem] = []
+        
+        // Fetch localStorage
+        let localStorageScript = """
         (function() {
             return Object.entries(localStorage);
         })();
         """
         
         do {
-            let result = try await webView.evaluateJavaScript(script)
+            let result = try await webView.evaluateJavaScript(localStorageScript)
             if let entries = result as? [[Any]] {
-                return entries.compactMap { entry in
+                let localItems = entries.compactMap { entry -> WebStorageItem? in
                     guard entry.count == 2,
                           let key = entry[0] as? String,
                           let value = entry[1] as? String else { return nil }
-                    return LocalStorageItem(key: key, value: value)
+                    return WebStorageItem(key: key, value: value, type: .localStorage)
                 }
+                allItems.append(contentsOf: localItems)
             }
         } catch {
             print("Error fetching localStorage: \(error)")
         }
-        return []
+        
+        // Fetch sessionStorage
+        let sessionStorageScript = """
+        (function() {
+            return Object.entries(sessionStorage);
+        })();
+        """
+        
+        do {
+            let result = try await webView.evaluateJavaScript(sessionStorageScript)
+            if let entries = result as? [[Any]] {
+                let sessionItems = entries.compactMap { entry -> WebStorageItem? in
+                    guard entry.count == 2,
+                          let key = entry[0] as? String,
+                          let value = entry[1] as? String else { return nil }
+                    return WebStorageItem(key: key, value: value, type: .sessionStorage)
+                }
+                allItems.append(contentsOf: sessionItems)
+            }
+        } catch {
+            print("Error fetching sessionStorage: \(error)")
+        }
+        
+        // Fetch cookies
+        let cookieScript = "document.cookie;"
+        
+        do {
+            let result = try await webView.evaluateJavaScript(cookieScript)
+            if let cookieString = result as? String, !cookieString.isEmpty {
+                let cookiePairs = cookieString.split(separator: ";")
+                let cookieItems = cookiePairs.compactMap { pair -> WebStorageItem? in
+                    let trimmed = pair.trimmingCharacters(in: .whitespaces)
+                    let components = trimmed.split(separator: "=", maxSplits: 1)
+                    guard components.count == 2 else { return nil }
+                    let key = String(components[0])
+                    let value = String(components[1])
+                    return WebStorageItem(key: key, value: value, type: .cookies)
+                }
+                allItems.append(contentsOf: cookieItems)
+            }
+        } catch {
+            print("Error fetching cookies: \(error)")
+        }
+        
+        return allItems
     }
     
     @MainActor
